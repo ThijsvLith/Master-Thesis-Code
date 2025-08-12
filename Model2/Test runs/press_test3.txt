@@ -1,0 +1,10 @@
+   Runnr	Alpha-pr	Cd-press	Cl-press	Cm-press	Cn-press	Ct-press	Re-press	 M-press	 Q-press	 V-press	    Flap	 Cpu_001	 Cpl_001	Cn-p-cor	Ct-p-cor	Cm-p-cor
+       /	 degrees	       /	       /	       /	       /	       /	       /	       /	      Pa	     m/s	 degrees	  100.00	  100.00	       /	       /	       /
+       3	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+       4	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+       5	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+       6	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+       7	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+       8	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+       9	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      10	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	

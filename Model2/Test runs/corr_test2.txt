@@ -1,0 +1,4 @@
+   Runnr	   Alpha	      Cd	      Cl	      Cm	      Cn	      Ct	Cd-press	Cl-press	      Re	       M	       Q	       V	  Z_w.r.	    Flap	 Cn-corr	 Ct-corr	 Cm-corr
+       /	 degrees	       /	       /	       /	       /	       /	       /	       /	       /	       /	      Pa	     m/s	      mm	 degrees	       /	       /	       /
+       1	  21.178	0.238010	  1.3601	 -0.0896	  1.3543	-0.269434	     NaN	     NaN	9.822E+5	   0.086	  531.40	   29.66	  331.27	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+       2	  22.174	0.136178	  1.3386	 -0.0914	  1.2910	-0.379120	     NaN	     NaN	9.591E+5	   0.084	  507.10	   28.98	  328.79	   0.000		     NaN	     NaN	     NaN	

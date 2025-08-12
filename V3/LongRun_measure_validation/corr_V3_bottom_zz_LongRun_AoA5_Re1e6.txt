@@ -1,0 +1,3 @@
+   Runnr	   Alpha	      Cd	      Cl	      Cm	      Cn	      Ct	Cd-press	Cl-press	      Re	       M	       Q	       V	  Z_w.r.	    Flap	 Cn-corr	 Ct-corr	 Cm-corr
+       /	 degrees	       /	       /	       /	       /	       /	       /	       /	       /	       /	      Pa	     m/s	      mm	 degrees	       /	       /	       /
+       1	   5.167	0.024871	  0.8388	  0.0040	  0.8376	-0.050770	     NaN	     NaN	1.009E+6	   0.086	  527.33	   29.62	   80.40	   0.000		     NaN	     NaN	     NaN	

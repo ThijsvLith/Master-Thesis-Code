@@ -1,0 +1,46 @@
+   Runnr	Alpha-pr	Cd-press	Cl-press	Cm-press	Cn-press	Ct-press	Re-press	 M-press	 Q-press	 V-press	    Flap	 Cpu_001	 Cpl_001	Cn-p-cor	Ct-p-cor	Cm-p-cor
+       /	 degrees	       /	       /	       /	       /	       /	       /	       /	      Pa	     m/s	 degrees	  100.00	  100.00	       /	       /	       /
+      50	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      51	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      52	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      53	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      54	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      55	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      56	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      57	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      58	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      59	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      60	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      61	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      62	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      63	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      64	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      65	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      66	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      67	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      68	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      69	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      70	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      71	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      72	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      73	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      74	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      75	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      76	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      77	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      78	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      79	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+      80	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+      81	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+      82	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+      83	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+      84	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	Wake not in center of rake!; 
+      85	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      86	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      87	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      88	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      89	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      90	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      91	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      92	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
+      93	     NaN	     NaN	     NaN	     NaN	     NaN	     NaN	NaN	     NaN	     NaN	     NaN	   0.000		     NaN	     NaN	     NaN	
