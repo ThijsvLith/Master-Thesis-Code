@@ -26,7 +26,7 @@ params = [5, 6, 110, 132]
 param_names = ['Cd', 'Cl', 'Cpwu11', 'Cpwl11']
 
 # Prepare figure with 4 subplots (vertical)
-fig, axs = plt.subplots(4, 1, figsize=(10, 16), sharex=True)
+fig, axs = plt.subplots(4, 1, figsize=(16, 16), sharex=True)
 
 dfs = [
     (df_main, 'Main'),
@@ -36,16 +36,75 @@ dfs = [
 
 colors = ['C0', 'C1', 'C2']
 
+ax_right0 = None
 for i, (col, name) in enumerate(zip(params, param_names)):
+    ax = axs[i]
+    ax_right = ax.twinx()
+
     for df, label, color in zip([df_main, df_rerun1, df_rerun2], ['Main', 'Rerun1', 'Rerun2'], colors):
-        data = df[col].reset_index(drop=True)  # Reset index so x-axis is sample number
+        data = df[col].reset_index(drop=True)
         cummean = data.expanding().mean()
-        axs[i].plot(data.index, data, label=f'{label} original', alpha=0.5, color=color)
-        axs[i].plot(data.index, cummean, label=f'{label} cumulative mean', linewidth=2, linestyle='--', color=color)
-    axs[i].set_ylabel(name)
-    axs[i].legend()
-    axs[i].grid(True)
+        ax.plot(data.index, data, label=f'{label} original', alpha=0.5, color=color)
+        ax.plot(data.index, cummean, label=f'{label} cumulative mean', linewidth=2, linestyle='--', color=color)
+
+    # Calculate absolute percentage difference of cumulative mean for rerun1 and rerun2 with respect to main
+    main_cummean = df_main[col].reset_index(drop=True).expanding().mean()
+    rerun1_cummean = df_rerun1[col].reset_index(drop=True).expanding().mean()
+    rerun2_cummean = df_rerun2[col].reset_index(drop=True).expanding().mean()
+
+    min_len1 = min(len(main_cummean), len(rerun1_cummean))
+    min_len2 = min(len(main_cummean), len(rerun2_cummean))
+
+    abs_perc_diff_rerun1 = 100 * abs(rerun1_cummean[:min_len1] - main_cummean[:min_len1]) / abs(main_cummean[:min_len1])
+    abs_perc_diff_rerun2 = 100 * abs(rerun2_cummean[:min_len2] - main_cummean[:min_len2]) / abs(main_cummean[:min_len2])
+
+    ax_right.plot(
+        rerun1_cummean.index[:min_len1],
+        abs_perc_diff_rerun1,
+        linestyle=':',
+        linewidth=2,
+        color='C1',
+        label='Rerun1 |% diff (cummean)|'
+    )
+    ax_right.plot(
+        rerun2_cummean.index[:min_len2],
+        abs_perc_diff_rerun2,
+        linestyle=':',
+        linewidth=2,
+        color='C2',
+        label='Rerun2 |% diff (cummean)|'
+    )
+
+    ax.set_ylabel(name)
+    ax.grid(True)
+    ax_right.set_ylabel('Absolute percentage difference (%)', color='gray')
+    ax_right.tick_params(axis='y', labelcolor='gray')
+    ax_right.set_ylim(0)  # y-axis starts at 0
+    if i == 0:
+        ax_right0 = ax_right
+
+# Collect handles and labels from the first axis
+handles, labels = axs[0].get_legend_handles_labels()
+handles_right, labels_right = ax_right0.get_legend_handles_labels()
+
+# Combine handles and labels for legend
+all_handles = handles + handles_right
+all_labels = labels + labels_right
+
+plt.subplots_adjust(bottom=0.07)
+
+fig.legend(
+    all_handles,
+    all_labels,
+    loc='lower center',
+    bbox_to_anchor=(0.45, 0),
+    ncol=4,
+    fontsize=12
+)
 
 axs[-1].set_xlabel('Row index')
-plt.tight_layout()
+
+# Save the figure to the specified folder
+fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\Rerun analysis temp fig.png', dpi=300, bbox_inches='tight')
+
 plt.show()

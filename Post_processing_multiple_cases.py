@@ -1,5 +1,27 @@
 # from Conditions import get_parameters
 
+"""
+Post-processing script for wind tunnel wind tunnel analysis.
+
+This script loads, processes, and visualizes aerodynamic data for multiple wind tunnel cases.
+It includes:
+    - Data loading and preprocessing for Model2 and V3 cases
+    - Correction factor calculation and application
+    - Extrapolation and uncertainty estimation
+    - Plotting of lift, drag, and other aerodynamic coefficients
+
+Functions:
+    - concise_label: Generate concise legend labels from case names
+    - load_and_preprocess_data_unc: Load and preprocess uncorrected data
+    - load_and_preprocess_data_corr: Load and preprocess corrected data
+    - parse_case_info: Parse model and Reynolds number from case name
+    - get_cm_from_alpha: Interpolate/extrapolate moment coefficient from Kasper's model
+
+Usage:
+    Adjust the 'casenames' list and STRIPS dictionary as needed for your cases.
+    Run the script to generate summary plots for all cases.
+"""
+
 # case = 'Model2_no_zz_Re_5e5'
 # parameters = get_parameters(case)
 # print(f"Parameters for {case}: {parameters}")
@@ -15,11 +37,36 @@ from scipy.interpolate import interp1d
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 def concise_label(casename):
+    """
+    Generate a concise label for the given case name by removing model and Reynolds number info.
+
+    Args:
+        casename (str): Full case name string.
+    Returns:
+        str: Concise label for legend.
+    """
     label = casename.replace('Model2_', '').replace('V3_', '')
     label = label.replace('_Re_5e5', '').replace('_Re_1e6', '')
     return label
 
 def load_and_preprocess_data_unc(filename, model, CPwu_column, CPwl_column, PARAM, z_min=340, z_max=380, alpha_col=1, tol=0.05):
+    """
+    Load and preprocess uncorrected wind tunnel data for a given case.
+    Applies filtering, grouping, and extracts relevant columns.
+
+    Args:
+        filename (str): Path to data file.
+        model (str): Model name ('Model2' or 'V3').
+        CPwu_column (list): Indices for upper pressure taps.
+        CPwl_column (list): Indices for lower pressure taps.
+        PARAM (dict): Dictionary to store parameters and results.
+        z_min (float): Minimum z value for filtering.
+        z_max (float): Maximum z value for filtering.
+        alpha_col (int): Column index for angle of attack.
+        tol (float): Tolerance for grouping.
+    Returns:
+        pd.DataFrame: Preprocessed data.
+    """
     # Skip the first two rows
     data = pd.read_csv(filename, sep='\t', header=None, skiprows=2, usecols=range(145))
     data = data.apply(pd.to_numeric, errors='coerce')
@@ -70,9 +117,26 @@ def load_and_preprocess_data_unc(filename, model, CPwu_column, CPwl_column, PARA
     keep_cols = [1, 5, 6, 7] + CPwu_column + CPwl_column
     keep_cols = sorted(set(keep_cols))
     data = data.iloc[:, keep_cols]
+    
     return data
 
 def load_and_preprocess_data_corr(filename, model, CPwu_column, CPwl_column, z_min=340, z_max=380, alpha_col=1, tol=0.05):
+    """
+    Load and preprocess corrected wind tunnel data for a given case.
+    Applies filtering, grouping, and extracts relevant columns.
+
+    Args:
+        filename (str): Path to data file.
+        model (str): Model name ('Model2' or 'V3').
+        CPwu_column (list): Indices for upper pressure taps.
+        CPwl_column (list): Indices for lower pressure taps.
+        z_min (float): Minimum z value for filtering.
+        z_max (float): Maximum z value for filtering.
+        alpha_col (int): Column index for angle of attack.
+        tol (float): Tolerance for grouping.
+    Returns:
+        pd.DataFrame: Preprocessed data.
+    """
     # Skip the first two rows
     data = pd.read_csv(filename, sep='\t', header=None, skiprows=2, usecols=range(18))
     # Convert all data to numeric, set errors to NaN
@@ -92,6 +156,14 @@ def load_and_preprocess_data_corr(filename, model, CPwu_column, CPwl_column, z_m
     return data
 
 def parse_case_info(case_string):
+    """
+    Parse the model name and Reynolds number from a case name string.
+
+    Args:
+        case_string (str): Full case name string.
+    Returns:
+        tuple: (model, Re) where model is str and Re is str or None.
+    """
     parts = case_string.split('_')
     model = parts[0]  # Always the first part
     Re = None
@@ -108,6 +180,17 @@ def parse_case_info(case_string):
     return model, Re
 
 def get_cm_from_alpha(alpha_query, Model, Re):
+    """
+    Interpolate or extrapolate the moment coefficient (Cm) for a given angle of attack
+    using Kasper's model data and spline interpolation.
+
+    Args:
+        alpha_query (array-like): Angles of attack to query.
+        Model (str): Model name ('Model2' or 'V3').
+        Re (str): Reynolds number as string.
+    Returns:
+        np.ndarray: Interpolated/extrapolated Cm values.
+    """
     ## THESE VALUES ARE CMPitch From Kaspers model fully turbulent
     if Model == 'V3' and Re == '1e6':
         alpha_data = np.array([-10, -5, -2, 0, 2, 6, 10, 12, 14, 16, 18, 20, 22])
@@ -140,7 +223,7 @@ def get_cm_from_alpha(alpha_query, Model, Re):
     return spline(alpha_clipped)
 
 # Airfoil input
-model = 'Model2'
+# model = 'Model2'
 
 casenames = ['Model2_no_zz_Re_5e5',
              'Model2_small_zz_bottom_Re_5e5',
@@ -162,15 +245,15 @@ casenames = ['Model2_no_zz_Re_5e5',
 #             'V3_zz_bottom_0.05c_top_Re_5e5', 
 #             'V3_bottom_45_deg_Re_5e5']
 
-casenames = ['V3_no_zz_Re_1e6', 
-                    'V3_small_zz_bottom_Re_1e6', 
-                    'V3_zz_0.05c_top_Re_1e6', 
-                    'V3_zz_bottom_0.05c_top_Re_1e6', 
-                    'V3_bottom_0.03c_top_Re_1e6',
-                    'V3_bottom_45deg_0.03c_top_Re_1e6', 
-                    'V3_bottom_45_deg_Re_1e6']
+# casenames = ['V3_no_zz_Re_1e6', 
+#                     'V3_small_zz_bottom_Re_1e6', 
+#                     'V3_zz_0.05c_top_Re_1e6', 
+#                     'V3_zz_bottom_0.05c_top_Re_1e6', 
+#                     'V3_bottom_0.03c_top_Re_1e6',
+#                     'V3_bottom_45deg_0.03c_top_Re_1e6', 
+#                     'V3_bottom_45_deg_Re_1e6']
 
-# casenames = ['V3_no_zz_Re_1e6']
+# casenames = ['V3_no_zz_Re_5e5']
 
 Method = 'Fmincon'
 alpha_min = 2
@@ -436,36 +519,80 @@ for casename in casenames:
         ax4.plot(POSTDATA_D2_wallcdcmcorr[:, 0], POSTDATA_D2_wallcdcmcorr[:, 2]/POSTDATA_D2_wallcdcmcorr[:, 1], '-', linewidth=2, color=dash_color, label=label)
 
 
-alpha_kasper = [-10, -5, -2, 0, 2, 6, 10, 12, 14, 16, 18, 20, 22]
-Cl_kasper = [-0.27, -0.152, -0.0115, 0.254, 0.59, 1.14, 1.53, 1.68, 1.73, 1.16, 1.08, 1.07, 1.07] ## V3
-# Cl_kasper = [-0.28, -0.113, 0.0202, 0.323, 0.686, 1.24, 1.65, 1.81, 1.91, 1.52, 1.45, 1.39, 1.31] # Model2
-Cd_kasper = [0.115, 0.071, 0.0505, 0.0366, 0.0275, 0.0161, 0.025, 0.0383, 0.0828, 0.185, 0.241, 0.287, 0.323] #V3
-# Cd_kasper = [1.19E-01, 6.60E-02, 4.42E-02, 3.33E-02, 2.38E-02, 1.83E-02, 2.27E-02, 3.18E-02, 5.44E-02, 1.16E-01, 1.60E-01, 2.08E-01, 2.63E-01]
+# alpha_kasper = [-10, -5, -2, 0, 2, 6, 10, 12, 14, 16, 18, 20, 22]
+# Cl_kasper = [-0.27, -0.152, -0.0115, 0.254, 0.59, 1.14, 1.53, 1.68, 1.73, 1.16, 1.08, 1.07, 1.07] ## V3
+# # Cl_kasper = [-0.28, -0.113, 0.0202, 0.323, 0.686, 1.24, 1.65, 1.81, 1.91, 1.52, 1.45, 1.39, 1.31] # Model2
+# Cd_kasper = [0.115, 0.071, 0.0505, 0.0366, 0.0275, 0.0161, 0.025, 0.0383, 0.0828, 0.185, 0.241, 0.287, 0.323] #V3
+# # Cd_kasper = [1.19E-01, 6.60E-02, 4.42E-02, 3.33E-02, 2.38E-02, 1.83E-02, 2.27E-02, 3.18E-02, 5.44E-02, 1.16E-01, 1.60E-01, 2.08E-01, 2.63E-01]
 
 
 
-########### TESTTEST
-alpha_kasper = [6,10,12,14,16,18,20]
-Cl_kasper = [1.17, 1.5,1.61,1.43,1.09,1.13,1.23]
-Cd_kasper = [0.017, 0.0227, 0.0423, 0.0973, 0.179, 0.194, 0.231]
+# ########### TESTTEST
+# alpha_kasper = [6,10,12,14,16,18,20]
+# Cl_kasper = [1.17, 1.5,1.61,1.43,1.09,1.13,1.23]
+# Cd_kasper = [0.017, 0.0227, 0.0423, 0.0973, 0.179, 0.194, 0.231]
 
 
 # ax1.plot(alpha_kasper, Cl_kasper, '--', linewidth=2, color='g', label='Kasper model')
 # ax1.set_title(rf'$C_l$–$\alpha$ for {model} at Re = {Re}', fontsize=16)
 ax1.set_xlabel(r'$\alpha$ ($^\circ$)', fontsize=18)
-ax1.set_ylabel(r'$C_l$ (-)', fontsize=18)
+ax1.set_ylabel(r'$C_\mathrm{l}$ (-)', fontsize=18)
 # ax1.legend(fontsize=12)
 
 # ax2.plot(alpha_kasper, Cd_kasper, '--', linewidth=2, color='g', label='Kasper model')
 # ax2.set_title(rf'$C_d$–$\alpha$ for {model} at Re = {Re}', fontsize=16)
 ax2.set_xlabel(r'$\alpha$ ($^\circ$)', fontsize=16)
-ax2.set_ylabel(r'$C_d$ (-)', fontsize=16)
-ax2.legend(fontsize=12, loc='upper left')  # Add legend to ax2 in the top left corner
+ax2.set_ylabel(r'$C_\mathrm{d}$ (-)', fontsize=16)
+# ax2.legend(fontsize=12, loc='upper left')  # Add legend to ax2 in the top left corner
 
 # ax3.plot(Cd_kasper,Cl_kasper, '--', linewidth=2, color='g', label='Kasper model')
 # ax3.set_title(rf'$C_l$–$C_d$ for {model} at Re = {Re}', fontsize=16)
-ax3.set_xlabel(r'$C_d$ (-)', fontsize=16)
-ax3.set_ylabel(r'$C_l$ (-)', fontsize=16)
+ax3.set_xlabel(r'$C_\mathrm{d}$ (-)', fontsize=16)
+ax3.set_ylabel(r'$C_\mathrm{l}$ (-)', fontsize=16)
+
+ax4.set_xlabel(r'$\alpha$ ($^\circ$)', fontsize=16)
+ax4.set_ylabel(r'$C_\mathrm{l}/C_\mathrm{d}$ (-)', fontsize=16)
+
+
+## Set same axis size for Cl Cd and Cl/cd - alpha plots
+for ax in [ax1, ax2, ax4]:
+    ax.set_xlim(-11, 26)
+    ax.set_xticks(np.arange(-10, 26, 5))
+
+# Example: Set y-axis limits (adjust as needed for your data)
+ax1.set_ylim(-0.5, 2.0)   # Cl axis
+ax1.set_yticks(np.arange(-0.5, 2.6, 0.5))
+
+ax2.set_ylim(0, 0.4)      # Cd axis
+ax2.set_yticks(np.arange(0, 0.41, 0.1))
+
+ax4.set_ylim(-10, 100)      # Cl/Cd axis
+ax4.set_yticks(np.arange(0, 101, 20))
+
+## Set same axis size for Cl-Cd
+ax3.set_xlim(0, 0.4)           # Set x-axis limits for Cd
+ax3.set_xticks(np.arange(0, 0.41, 0.1))  # Set x-axis ticks for Cd
+
+ax3.set_ylim(-0.5, 2.5)         # Set y-axis limits for Cl
+ax3.set_yticks(np.arange(-0.5, 2.6, 0.5)) # Set y-axis ticks for Cl
+
+# Place a single legend at the bottom center of the figure
+handles, labels = ax1.get_legend_handles_labels()
+
+plt.subplots_adjust(bottom=0.15)
+
+fig.legend(
+    handles,
+    labels,
+    loc='lower center',
+    bbox_to_anchor=(0.45, 0.02),  # Move legend bar up into the figure
+    ncol=len(labels),
+    fontsize=12
+)
+
+fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\Model2_Re5e5_polars_new.png', dpi=300, bbox_inches='tight')
+
+
 
 plt.show()
 

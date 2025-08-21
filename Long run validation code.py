@@ -24,7 +24,7 @@ df_short = df_short.iloc[1675:1786, :]
 #     sharex=True
 # )
 
-fig, axs = plt.subplots(4, 1, figsize=(10, 16), sharex=True)
+fig, axs = plt.subplots(4, 1, figsize=(16, 16), sharex=True)
 
 for ax, col in zip(axs, COLS):
     y_short = df_short.iloc[:, col].reset_index(drop=True)
@@ -54,7 +54,7 @@ for ax, col in zip(axs, COLS):
 
     ax.yaxis.set_major_locator(mticker.MaxNLocator(6))
     ax.set_ylabel(PARAM[col])
-    ax.set_title(PARAM[col])
+    # ax.set_title(PARAM[col])
     ax.grid(True)
 
     if ax is not axs[-1]:
@@ -62,8 +62,22 @@ for ax, col in zip(axs, COLS):
         ax.label_outer()
 
 axs[-1].set_xlabel('Sample index')
-axs[0].legend(loc='upper right')
+# axs[0].legend(loc='upper right')
 
-plt.tight_layout()
-# plt.savefig(r"C:\TU_Delft\Master\Thesis\Figures overleaf\Results\Long_run_validation.png", dpi=300)
+plt.subplots_adjust(bottom=0.07)
+
+handles, labels = axs[0].get_legend_handles_labels()
+
+# Place a single legend at the bottom center of the figure
+fig.legend(
+    handles,
+    labels,
+    loc='lower center',
+    bbox_to_anchor=(0.45, 0),
+    ncol=len(labels),
+    fontsize=12
+)
+
+# plt.tight_layout()
+plt.savefig(r"C:\TU_Delft\Master\Thesis\Figures overleaf\Results\Long_run_validation_new.png", dpi=300, bbox_inches='tight')
 plt.show()
