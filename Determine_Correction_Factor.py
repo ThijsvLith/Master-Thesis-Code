@@ -99,8 +99,8 @@ def plot_fitting_subplots(presspos, diffCp, x, Cpth, alpha, rangealpha):
         plt.subplot(2, int(np.ceil(p / 2)), idx + 1)
         plt.plot(presspos, diffCp[i, :], 'x', label='Measured')
         plt.plot(1000 * x, Cpth[i, :], '-', label='Calculated')
-        plt.xlabel('X')
-        plt.ylabel('Cp')
+        plt.xlabel('$x$ (mm)')
+        plt.ylabel(r'$C_p$ (-)')
         plt.title(f'Angle = {alpha[i]:.1f}°')
         plt.xlim([-2.5e3, 5e3])
         plt.grid(True)
@@ -110,10 +110,10 @@ def plot_fitting_subplots(presspos, diffCp, x, Cpth, alpha, rangealpha):
 
 # ==== Main script logic ====
 Final_Factor = True # Set to True if you want to calculate the final correction factor for a specific case
-All_Factors = False # Set to True if you want to calculate all correction factors for every Angle of Attack
-Provide_plot = True # Set to True if you want to plot the fitting subplots
-alpha_min = -10 if All_Factors else 2
-alpha_max = 25 if All_Factors else 18
+All_Factors = True # Set to True if you want to calculate all correction factors for every Angle of Attack
+Provide_plot = False # Set to True if you want to plot the fitting subplots
+alpha_min = -10 if All_Factors else 7.5
+alpha_max = 25 if All_Factors else 9
 
 
 model = 'V3' ## Specify model as additional preprocessing step has to be done for model2
@@ -132,7 +132,7 @@ elif model == 'V3':
                 'V3_zz_bottom_0.05c_top_Re_1e6', 'V3_zz_bottom_0.05c_top_Re_5e5',
                 'V3_bottom_0.03c_top_Re_1e6', 'V3_bottom_45deg_0.03c_top_Re_1e6', 
                 'V3_bottom_45_deg_Re_1e6','V3_bottom_45_deg_Re_5e5']
-    fit_case = 'V3_bottom_45_deg_Re_1e6'
+    fit_case = 'V3_no_zz_Re_1e6'
 
 
 ## Locations of certain parameters

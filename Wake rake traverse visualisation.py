@@ -27,18 +27,21 @@ y3 = data3_sel.iloc[:, 5]
 
 x3_adjusted = x3-100
 
-plt.figure(figsize=(9, 5))
+plt.figure(figsize=(16, 5))
 
 # Plot lines with defined color cycle
-plt.plot(x1, y1, color='C0', linestyle='-', label='Model2 Full traverse')  # blue
-plt.plot(x2, y2, color='C1', linestyle='-', label='Model2 (no zigzag, Re=1e6)')  # orange
-plt.plot(x3, y3, color='C2', linestyle='-', label='Model2 (zz @ 0.1c top, Re=1e6)')
-plt.plot(x3_adjusted, y3, color='C2', linestyle='--', label='Model2 (shifted, zz @ 0.1c top)')
+plt.plot(x1, y1, color='C0', linestyle='-', label='Full traverse no_zz')  # blue
+plt.plot(x2, y2, color='C1', linestyle='-', label='no_zz')  # orange
+plt.plot(x3, y3, color='C2', linestyle='-', label='zz_0.1c_top')  # green
+plt.plot(x3_adjusted, y3, color='C2', linestyle='--', label='zz_0.1c_top (shifted)')
 
 # Labels and title
-plt.xlabel('z-position on wake rake [mm]', fontsize=12)
-plt.ylabel('$C_d$ [-]', fontsize=12)
-plt.title('Wake Rake Traverse Comparison $\\alpha = 8^\\circ$ and $Re = 1e6$', fontsize=13)
+plt.xlabel('z-position on wake rake (mm)', fontsize=12)
+plt.ylabel('$C_d$ (-)', fontsize=12)
+# plt.title('Wake Rake Traverse Comparison $\\alpha = 8^\\circ$ and $Re = 1e6$', fontsize=13)
+
+plt.xlim(0, 400)  # Set x-axis from 0 to 400
+plt.xticks(range(0, 401, 50))  # Optional: ticks every 50 mm
 
 # Grid and legend
 plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)

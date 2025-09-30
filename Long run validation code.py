@@ -24,9 +24,17 @@ df_short = df_short.iloc[1675:1786, :]
 #     sharex=True
 # )
 
+# Math mode labels for y-axis
+math_labels = [
+    r'$C_\mathrm{d}$ (-)',
+    r'$C_\mathrm{l}$ (-)',
+    r'$C_{p,u,11}$ (-)',
+    r'$C_{p,l,11}$ (-)'
+]
+
 fig, axs = plt.subplots(4, 1, figsize=(16, 16), sharex=True)
 
-for ax, col in zip(axs, COLS):
+for ax, col, math_label in zip(axs, COLS, math_labels):
     y_short = df_short.iloc[:, col].reset_index(drop=True)
     y_long  = df_long.iloc[:,  col].reset_index(drop=True)
 
@@ -34,8 +42,9 @@ for ax, col in zip(axs, COLS):
     short_mean = y_short.expanding(min_periods=1).mean()
     long_mean  = y_long.expanding(min_periods=1).mean()
 
+    # Make x-axis as long as the long run measurements, starting from zero
+    x_long = range(len(y_long))
     x_short = range(len(y_short))
-    x_long  = range(len(y_long))
 
     # Raw data
     ax.plot(x_short, y_short, label='short raw', color='C0', alpha=0.5)
@@ -53,16 +62,18 @@ for ax, col in zip(axs, COLS):
     ax.set_ylim(y_min - pad, y_max + pad)
 
     ax.yaxis.set_major_locator(mticker.MaxNLocator(6))
-    ax.set_ylabel(PARAM[col])
-    # ax.set_title(PARAM[col])
+    ax.set_ylabel(math_label)
     ax.grid(True)
+
+    # Set x-axis limits to match long run measurements
+    ax.set_xlim(0, len(y_long) - 1)
 
     if ax is not axs[-1]:
         ax.set_xlabel('')
         ax.label_outer()
 
-axs[-1].set_xlabel('Sample index')
-# axs[0].legend(loc='upper right')
+# Set x-axis label for the last subplot
+axs[-1].set_xlabel('Measurement number (-)')
 
 plt.subplots_adjust(bottom=0.07)
 
@@ -75,7 +86,8 @@ fig.legend(
     loc='lower center',
     bbox_to_anchor=(0.45, 0),
     ncol=len(labels),
-    fontsize=12
+    fontsize=12,
+    frameon=False
 )
 
 # plt.tight_layout()

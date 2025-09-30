@@ -116,7 +116,7 @@ casename1 = casename  # You can change this if needed
 
 Method = 'Fmincon'
 alpha_min = 2
-alpha_max = 12
+alpha_max = 8
 
 # Enter columns in which upper and lower pressures are defined
 STRIPS = {}

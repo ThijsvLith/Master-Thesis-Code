@@ -45,8 +45,11 @@ def concise_label(casename):
     Returns:
         str: Concise label for legend.
     """
-    label = casename.replace('Model2_', '').replace('V3_', '')
-    label = label.replace('_Re_5e5', '').replace('_Re_1e6', '')
+    label = casename.replace('small_', '')
+    label = label.replace('V3_bottom', 'V3_zz_bottom')
+    label = label.replace('Model2_', '').replace('V3_', '')
+    # label = casename.replace('Model2_', '').replace('V3_', '')
+    # label = label.replace('_Re_5e5', '').replace('_Re_1e6', '')
     return label
 
 def load_and_preprocess_data_unc(filename, model, CPwu_column, CPwl_column, PARAM, z_min=340, z_max=380, alpha_col=1, tol=0.05):
@@ -79,7 +82,7 @@ def load_and_preprocess_data_unc(filename, model, CPwu_column, CPwl_column, PARA
         data = grouped
         idx = data[data[9] == 260].index
         PARAM['skip_idx'] = idx.tolist()
-        ic(idx)
+        # ic(idx)
         # --- Added logic here ---
         if not idx.empty:
             use_idx = idx[0]
@@ -225,19 +228,19 @@ def get_cm_from_alpha(alpha_query, Model, Re):
 # Airfoil input
 # model = 'Model2'
 
-casenames = ['Model2_no_zz_Re_5e5',
-             'Model2_small_zz_bottom_Re_5e5',
-             'Model2_zz_0.1c_top_Re_5e5',
-             'Model2_zz_0.05c_top_Re_5e5',
-             'Model2_zz_bottom_0.05c_top_Re_5e5',
-             'Model2_zz_bottom_Re_5e5']  # State all different cases here
+# casenames = ['Model2_no_zz_Re_5e5',
+#              'Model2_small_zz_bottom_Re_5e5',
+#              'Model2_zz_0.1c_top_Re_5e5',
+#              'Model2_zz_0.05c_top_Re_5e5',
+#              'Model2_zz_bottom_0.05c_top_Re_5e5']#,
+#             #  'Model2_zz_bottom_Re_5e5']  # State all different cases here
 
 # casenames = ['Model2_no_zz_Re_1e6', 
 #              'Model2_small_zz_bottom_Re_1e6',
 #             'Model2_zz_0.1c_top_Re_1e6', 
 #             'Model2_zz_0.05c_top_Re_1e6',
-#             'Model2_zz_bottom_0.05c_top_Re_1e6',
-#             'Model2_zz_bottom_Re_1e6']  ## State all different cases here
+#             'Model2_zz_bottom_0.05c_top_Re_1e6']#,
+#             #'Model2_zz_bottom_Re_1e6']  ## State all different cases here
 
 # casenames = ['V3_no_zz_Re_5e5',
 #             'V3_small_zz_bottom_Re_5e5',
@@ -255,9 +258,13 @@ casenames = ['Model2_no_zz_Re_5e5',
 
 # casenames = ['V3_no_zz_Re_5e5']
 
+# casenames = ['V3_no_zz_Re_5e5', 'V3_no_zz_Re_1e6', 'V3_zz_bottom_0.05c_top_Re_5e5','V3_zz_bottom_0.05c_top_Re_1e6']
+
+casenames = ['Model2_no_zz_Re_5e5', 'Model2_no_zz_Re_1e6', 'Model2_zz_bottom_0.05c_top_Re_5e5','Model2_zz_bottom_0.05c_top_Re_1e6']
+
 Method = 'Fmincon'
 alpha_min = 2
-alpha_max = 10
+alpha_max = 8
 
 # Enter columns in which upper and lower pressures are defined
 STRIPS = {}
@@ -294,7 +301,7 @@ ax4.tick_params(labelsize=14)
 for casename in casenames:
 
     model, Re = parse_case_info(casename)
-    print(model, Re)
+    # print(model, Re)
 
     if model == 'Model2':
             PARAM = {
@@ -388,7 +395,7 @@ for casename in casenames:
 
     ## # --- Extrapolate the Cd values when the wake rake cuts out
     # Create logical mask for "bad" values
-    ic(PARAM)
+    # ic(PARAM)
     logical = (
         (POSTDATA_C1_cdcorr[:, 0] <= PARAM['amin']) |
         (POSTDATA_C1_cdcorr[:, 0] >= PARAM['amax']) |
@@ -478,6 +485,7 @@ for casename in casenames:
 
         # Plot corrected Cl (solid)
         label = concise_label(casename)
+        
         line = ax1.plot(data_corrected[:, 0], data_corrected[:, 2], '-', linewidth=2, label=label)[0]
         dash_color = line.get_color()
 
@@ -556,7 +564,7 @@ ax4.set_ylabel(r'$C_\mathrm{l}/C_\mathrm{d}$ (-)', fontsize=16)
 
 ## Set same axis size for Cl Cd and Cl/cd - alpha plots
 for ax in [ax1, ax2, ax4]:
-    ax.set_xlim(-11, 26)
+    ax.set_xlim(-10, 25)
     ax.set_xticks(np.arange(-10, 26, 5))
 
 # Example: Set y-axis limits (adjust as needed for your data)
@@ -587,13 +595,20 @@ fig.legend(
     loc='lower center',
     bbox_to_anchor=(0.45, 0.02),  # Move legend bar up into the figure
     ncol=len(labels),
-    fontsize=12
+    fontsize=12,
+    frameon=False
 )
 
-fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\Model2_Re5e5_polars_new.png', dpi=300, bbox_inches='tight')
+fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\Model2_combined_Re.png', dpi=300, bbox_inches='tight')
+# fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\V3_combined_Re.png', dpi=300, bbox_inches='tight')
 
+# fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\Model2_Re1e6_polars_new.png', dpi=300, bbox_inches='tight')
+# fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\Model2_Re5e5_polars_new.png', dpi=300, bbox_inches='tight')
 
+# fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\V3_Re1e6_polars_new.png', dpi=300, bbox_inches='tight')
+# fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\POLARS\V3_Re5e5_polars_new.png', dpi=300, bbox_inches='tight')
 
+plt.tight_layout()
 plt.show()
 
 

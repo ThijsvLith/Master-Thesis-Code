@@ -18,7 +18,9 @@ df_rerun1 = pd.read_csv(file_rerun1, sep='\t', header=None, skiprows=2, usecols=
 df_rerun1 = df_rerun1.iloc[:110, :]
 
 df_rerun2 = pd.read_csv(file_rerun2, sep='\t', header=None, skiprows=2, usecols=range(145))
-df_rerun2 = df_rerun2.iloc[:163, :]
+df_rerun2 = df_rerun2.iloc[:110, :]  # Make sample count equal to rerun1
+
+# ...existing code...
 
 ic(df_main)
 
@@ -37,9 +39,21 @@ dfs = [
 colors = ['C0', 'C1', 'C2']
 
 ax_right0 = None
+# Math mode labels for y-axis
+math_labels = [
+    r'$C_\mathrm{d}$ (-)',
+    r'$C_\mathrm{l}$ (-)',
+    r'$C_{p,u,11}$ (-)',
+    r'$C_{p,l,11}$ (-)'
+]
+
 for i, (col, name) in enumerate(zip(params, param_names)):
     ax = axs[i]
     ax_right = ax.twinx()
+
+    # Determine the number of samples (all runs have same length)
+    num_samples = len(df_main)
+    ax.set_xlim(0, num_samples - 1)  # Set x-axis to cover all measurements
 
     for df, label, color in zip([df_main, df_rerun1, df_rerun2], ['Main', 'Rerun1', 'Rerun2'], colors):
         data = df[col].reset_index(drop=True)
@@ -75,7 +89,7 @@ for i, (col, name) in enumerate(zip(params, param_names)):
         label='Rerun2 |% diff (cummean)|'
     )
 
-    ax.set_ylabel(name)
+    ax.set_ylabel(math_labels[i])
     ax.grid(True)
     ax_right.set_ylabel('Absolute percentage difference (%)', color='gray')
     ax_right.tick_params(axis='y', labelcolor='gray')
@@ -99,12 +113,14 @@ fig.legend(
     loc='lower center',
     bbox_to_anchor=(0.45, 0),
     ncol=4,
-    fontsize=12
+    fontsize=12,
+    frameon=False
 )
 
-axs[-1].set_xlabel('Row index')
+axs[-1].set_xlabel('Measurement number (-)')
 
 # Save the figure to the specified folder
 fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\Rerun analysis temp fig.png', dpi=300, bbox_inches='tight')
+
 
 plt.show()

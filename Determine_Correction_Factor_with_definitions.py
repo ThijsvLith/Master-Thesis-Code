@@ -56,6 +56,7 @@ def calculate_correction_factor(alpha, diffCp, presspos, alpha_min, alpha_max, m
     rangealpha = np.where((alpha >= alpha_min) & (alpha <= alpha_max))[0]
     CpmaxT = np.zeros(m)
     for i in range(m):
+        # ic(pd.DataFrame(diffCp))
         if np.max(diffCp[i, :]) > 0:
             CpmaxT[i] = np.max(diffCp[i, :])
         else:
@@ -69,6 +70,7 @@ def calculate_correction_factor(alpha, diffCp, presspos, alpha_min, alpha_max, m
                 return np.sum((model - diffCp[i, :]) ** 2)
             res = minimize(func, [1.6, 1.0, CpmaxT[i]], method='SLSQP')
             OPT[i, :] = res.x
+            # ic(OPT)
             error[i] = res.fun
         else:
             raise ValueError("Invalid method selected. Choose 'Fmincon'.")
@@ -85,15 +87,18 @@ def calculate_correction_factor(alpha, diffCp, presspos, alpha_min, alpha_max, m
     return factor, rangealpha, x, Cpth
 
 def plot_correction_factors(alphas_list, factors_list, labels):
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(16, 6))
     for alpha, factor, label in zip(alphas_list, factors_list, labels):
+        
         plt.plot(alpha, factor, 'o', label=label)
-    plt.xlabel('Angle of attack (deg)')
-    plt.ylabel('Correction factor')
+    plt.xlabel(r'$\alpha$ ($^\circ$)')
+    plt.ylabel(r'$\eta$ (-)')
     plt.ylim([1, 1.5])
-    plt.title('Correction factor vs. Angle of attack')
+    plt.xlim(-10, 25)
+    plt.xticks(range(-10, 26, 5))
+    # plt.title('Correction factor vs. Angle of attack')
     plt.grid(True)
-    plt.legend()
+    plt.legend(loc='lower left')
     plt.tight_layout()
     plt.show()
 
@@ -128,7 +133,12 @@ def correction_factors_all_cases(casenames, model, STRIPS, alpha_min, alpha_max,
         factor, rangealpha, x, Cpth = calculate_correction_factor(alpha, diffCp, STRIPS['x'], alpha_min, alpha_max, Method)
         alphas_list.append(alpha)
         factors_list.append(factor)
-        labels.append(casename)
+        # Remove 'small_' from label if present
+        label = casename.replace('small_', '')
+        label = label.replace('V3_bottom', 'V3_zz_bottom')
+        label = label.replace('Model2_', '').replace('V3_', '')
+        
+        labels.append(label)
     plot_correction_factors(alphas_list, factors_list, labels)
     return alphas_list, factors_list, labels
 
@@ -141,7 +151,7 @@ def correction_factor_single_case(casename, model, STRIPS, alpha_min, alpha_max,
 
     data = load_and_preprocess_data(filename, model, STRIPS['CPwu_column'], STRIPS['CPwl_column'], PARAM)
     alpha, Cpwu, Cpwl, diffCp = extract_measurements(data, STRIPS)
-    ic(diffCp)
+    # ic(diffCp)
     factor, rangealpha, x, Cpth = calculate_correction_factor(alpha, diffCp, STRIPS['x'], alpha_min, alpha_max, Method)
     if provide_plot:
         plot_fitting_subplots(STRIPS['x'], diffCp, x, Cpth, alpha, rangealpha)
@@ -170,20 +180,21 @@ def run_main():
 
     model = 'Model2' ## Specify model as additional preprocessing step has to be done for model2
     if model == 'Model2':
-        casenames = ['Model2_no_zz_Re_1e6', 'Model2_no_zz_Re_2e6', 'Model2_no_zz_Re_5e5',
-                    'Model2_small_zz_bottom_Re_1e6', 'Model2_small_zz_bottom_Re_5e5',
-                    'Model2_zz_0.1c_top_Re_1e6', 'Model2_zz_0.1c_top_Re_5e5',
-                    'Model2_zz_0.05c_top_Re_1e6', 'Model2_zz_0.05c_top_Re_5e5',
-                    'Model2_zz_bottom_0.05c_top_Re_1e6', 'Model2_zz_bottom_0.05c_top_Re_5e5',
-                    'Model2_zz_bottom_Re_1e6', 'Model2_zz_bottom_Re_5e5'] ## State all different cases here
+        casenames = ['Model2_no_zz_Re_5e5', 'Model2_no_zz_Re_1e6', 'Model2_no_zz_Re_2e6',
+                     'Model2_small_zz_bottom_Re_5e5', 'Model2_small_zz_bottom_Re_1e6',
+                    'Model2_zz_0.1c_top_Re_5e5', 'Model2_zz_0.1c_top_Re_1e6',
+                    'Model2_zz_0.05c_top_Re_5e5', 'Model2_zz_0.05c_top_Re_1e6',
+                    'Model2_zz_bottom_0.05c_top_Re_5e5', 'Model2_zz_bottom_0.05c_top_Re_1e6']#,
+                   # 'Model2_zz_bottom_Re_1e6', 'Model2_zz_bottom_Re_5e5'] ## State all different cases here
         fit_case = 'Model2_zz_bottom_Re_5e5'  # Specify the case to use for fitting plot
     elif model == 'V3':
-        casenames = ['V3_no_zz_Re_1e6', 'V3_no_zz_Re_15e5', 'V3_no_zz_Re_5e5',
-                    'V3_small_zz_bottom_Re_1e6', 'V3_small_zz_bottom_Re_5e5',
-                    'V3_zz_0.05c_top_Re_1e6', 'V3_zz_0.05c_top_Re_5e5',
-                    'V3_zz_bottom_0.05c_top_Re_1e6', 'V3_zz_bottom_0.05c_top_Re_5e5',
-                    'V3_bottom_0.03c_top_Re_1e6', 'V3_bottom_45deg_0.03c_top_Re_1e6', 
-                    'V3_bottom_45_deg_Re_1e6','V3_bottom_45_deg_Re_5e5']
+        casenames = ['V3_no_zz_Re_5e5', 'V3_no_zz_Re_1e6', 'V3_no_zz_Re_15e5', 
+                    'V3_small_zz_bottom_Re_5e5', 'V3_small_zz_bottom_Re_1e6', 
+                    'V3_zz_0.05c_top_Re_5e5', 'V3_zz_0.05c_top_Re_1e6', 
+                    'V3_zz_bottom_0.05c_top_Re_5e5', 'V3_zz_bottom_0.05c_top_Re_1e6', 
+                     #'V3_bottom_0.03c_top_Re_1e6',  
+                    'V3_bottom_45_deg_Re_5e5', 'V3_bottom_45_deg_Re_1e6',
+                    'V3_bottom_45deg_0.03c_top_Re_1e6']
         fit_case = 'V3_no_zz_Re_5e5'
 
 
@@ -206,8 +217,8 @@ def run_main():
     a_min_fullrange = -10
     a_max_fullrange = 25
 
-    alpha_min = 6
-    alpha_max = 7
+    alpha_min = 2
+    alpha_max = 8
 
     ## # --- Run the functions ---
     correction_factors_all_cases(casenames, model, STRIPS, a_min_fullrange, a_max_fullrange, Method)

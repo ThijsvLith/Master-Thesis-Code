@@ -97,7 +97,7 @@ def load_and_preprocess_data_unc(filename_unc_all, filename_unc, model, CPwu_col
         grouped = grouped.drop(columns=['alpha_bin'])
         data = grouped
         idx = data[data[9] == 260].index
-        ic(idx)
+        # ic(idx)
         PARAM['skip_idx'] = idx.tolist()
         # --- Added logic here ---
         if not idx.empty:
@@ -115,7 +115,7 @@ def load_and_preprocess_data_unc(filename_unc_all, filename_unc, model, CPwu_col
 
     elif model == 'V3':
         idx = data_unc[data_unc[9].isin([40,120])].index
-        ic(idx)
+        # ic(idx)
         PARAM['skip_idx'] = idx.tolist()
         # --- Added logic here ---
         if not idx.empty:
@@ -214,7 +214,7 @@ def get_cm_from_alpha(alpha_query, Model, Re):
     return spline(alpha_clipped)
 
 # Airfoil input
-model = 'V3'
+model = 'Model2'
 
 # casenames = ['Model2_no_zz_Re_5e5',
 #              'Model2_small_zz_bottom_Re_5e5',
@@ -246,16 +246,18 @@ model = 'V3'
 
 # casenames = ['V3_bottom_45deg_0.03c_top_Re_1e6']
 
-casenames = ['Model2_no_zz_Re_5e5']
+# casenames = ['Model2_no_zz_Re_5e5']
 
-# casenames = ['V3_no_zz_Re_1e6']
+# casenames = ['Model2_no_zz_Re_1e6']
+
+casenames = ['V3_no_zz_Re_1e6']
 
 # casenames = ['V3_no_zz_Re_5e5']
 
 
 Method = 'Fmincon'
 alpha_min = 2
-alpha_max = 10
+alpha_max = 8
 
 # Enter columns in which upper and lower pressures are defined
 STRIPS = {}
@@ -273,7 +275,7 @@ CC = np.array([
 icolor = 1
 
 # # Prepare the plot
-fig = plt.figure(figsize=(18, 10))  # Similar to [100 100 1200 360] in pixels
+fig = plt.figure(figsize=(22, 7))  # Similar to [100 100 1200 360] in pixels
 
 # First subplot: Lift polar
 ax1 = fig.add_axes([0.08, 0.2, 0.4, 0.72])
@@ -298,7 +300,7 @@ for casename in casenames:
     transition = True
     cfd_results = data_cfd(model, Re, transition)
 
-    ic(cfd_results)
+    # ic(cfd_results)
 
     print(model, Re)
     label = concise_label(casename)
@@ -493,19 +495,19 @@ for casename in casenames:
     # Determine start index for plotting based on PARAM['skip_idx']
     start_idx = 1 if PARAM['skip_idx'][0] == 0 else 0
 
-    ic(PARAM['skip_idx'])
+    # ic(PARAM['skip_idx'])
     # Plot measured Cl (up to amax_idx) in one color, skipping first row if needed
     ax1.plot(
         POSTDATA_final[start_idx:amax_idx+1, 0],
         POSTDATA_final[start_idx:amax_idx+1, 2],
-        '-x', linewidth=2, color='C0', label=label
+        '-x', linewidth=2, color='C0', label='WT data'
     )
 
     # Plot measured Cd (up to amax_idx) in one color, skipping first row if needed
     ax2.plot(
         POSTDATA_final[start_idx:amax_idx+1, 0],
         POSTDATA_final[start_idx:amax_idx+1, 1],
-        '-x', linewidth=2, color='C0', label=label
+        '-x', linewidth=2, color='C0', label='WT data'
     )
 
     # Plot extrapolated Cl (from amax_idx onward) in another color, starting from the last measured point
@@ -517,14 +519,7 @@ for casename in casenames:
     #     ax2.plot(POSTDATA_final[amax_idx:, 0], POSTDATA_final[amax_idx:, 8], '-x', linewidth=2, color='red', label=f'Extrapolated')
 
     # Plot shaded area for the remaining values (if any)
-    if amax_idx < len(POSTDATA_final):
-        # For lift coefficient (Cl)
-        ax1.fill_between(
-            POSTDATA_final[amax_idx:, 0],
-            POSTDATA_final[amax_idx:, 4],  # lower bound
-            POSTDATA_final[amax_idx:, 6],  # upper bound
-            color='red', alpha=0.3, label=f'Extrapolated uncertainty'
-        )
+
         # # For drag coefficient (Cd)
         # ax2.fill_between(
         #     POSTDATA_final[amax_idx:, 0],
@@ -552,7 +547,14 @@ for casename in casenames:
         color='blue', alpha=0.3, label=f'CI of 99%'
     )
 
-
+    if amax_idx < len(POSTDATA_final):
+    # For lift coefficient (Cl)
+        ax1.fill_between(
+            POSTDATA_final[amax_idx:, 0],
+            POSTDATA_final[amax_idx:, 4],  # lower bound
+            POSTDATA_final[amax_idx:, 6],  # upper bound
+            color='red', alpha=0.3, label=f'Extrapolated uncertainty'
+        )
 
 ax1.plot(cfd_results['Alpha'], cfd_results['Cl'], '--o', linewidth=2, color='g', label='CFD data')
 ax1.set_xlabel(r'$\alpha$ ($^\circ$)', fontsize=18)
@@ -568,7 +570,7 @@ ax2.set_ylabel(r'$C_\mathrm{d}$ (-)', fontsize=18)
 
 
 for ax in [ax1, ax2]:
-    ax.set_xlim(-11, 26)
+    ax.set_xlim(-10, 25)
     ax.set_xticks(np.arange(-10, 26, 5))
 
 # Example: Set y-axis limits (adjust as needed for your data)
@@ -584,15 +586,21 @@ fig.legend(
     handles,
     labels,
     loc='lower center',
-    bbox_to_anchor=(0.5, 0.04),  # Move legend bar up into the figure
+    bbox_to_anchor=(0.5, 0.0),  # Move legend bar up into the figure
     ncol=len(labels),
-    fontsize=12
+    frameon=False,
+    fontsize=18
 )
 
+
+
+# fig.savefig(r'C:\TU_Delft\Master\Thesis\Figures overleaf\Results\CFD_comp\V3_Re1e6_transition_polars.png', dpi=300, bbox_inches='tight')
+
+
 plt.show()
-
 # ## # --- VALUES FROM KASKPERS MODEL ---
-
+# ic(pd.DataFrame(POSTDATA_final))
+# ic(cfd_results)
 
 
 
