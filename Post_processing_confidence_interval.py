@@ -26,7 +26,7 @@ def data_cfd(model,Re, transition):
     Returns:
         pd.DataFrame: Loaded CFD data
     """
-    root_path = r"C:\TU_Delft\Master\Thesis\Kasper results models\Thijs results"
+    root_path = r"C:\TU_Delft\Master\Thesis\Wind tunnel analysis code\Thijs LTT\Test_TvL\CFD results"
     # Select model folder
     if model.lower() == 'v3':
         model_folder = 'V3'
