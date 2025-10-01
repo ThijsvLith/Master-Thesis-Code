@@ -14,7 +14,10 @@ from plot_styling import set_plot_style
 from utils import PROCESSED_DATA_DIR, PROJECT_DIR, RESULTS_DIR, ensure_directory
 
 DEFAULT_CASES = ["V3_no_zz_Re_1e6"]
-
+# DEFAULT_CASES = ["Model2_no_zz_Re_1e6"]
+# DEFAULT_CASES = ["V3_no_zz_Re_5e5"]
+# DEFAULT_CASES = ["Model2_no_zz_Re_5e5"]
+# DEFAULT_CASES = ['V3_bottom_45deg_0.03c_top_Re_1e6']
 
 def parse_case_info(case_string: str) -> Tuple[str, str]:
     parts = case_string.split("_")
@@ -124,6 +127,7 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
             alpha=0.3,
             label="CI of 99\%",
         )
+        print(measured_df["std_Cl"])
         ax2.fill_between(
             measured_df["alpha"],
             measured_df["Cd"] - 3 * measured_df["std_Cd"],
@@ -144,7 +148,7 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
             "-x",
             linewidth=2,
             color="red",
-            label="Extrapolated Cl data",
+            label=r"Extrapolated $C_{\mathrm{l}}$ data",
         )
         if {"Cl_low", "Cl_up"}.issubset(extrap_df.columns):
             ax1.fill_between(
@@ -179,30 +183,41 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
     ax2.set_ylabel(r"$C_{\mathrm{d}}$ (-)")
 
     # Automatically set axis limits and ticks based on data ranges with some padding
-    def set_axis_limits_and_ticks(
-        ax,
-        xdata,
-        ydata,
-        xpad=1,
-    ):
-        xmin, xmax = np.min(xdata), np.max(xdata)
-        ymin, ymax = np.min(ydata), np.max(ydata)
-        ax.set_xlim(xmin - xpad, xmax + xpad)
-        # ax.set_ylim(ymin * 1.01, ymax * 1.01)
+    # def set_axis_limits_and_ticks(
+    #     ax,
+    #     xdata,
+    #     ydata,
+    #     xpad=1,
+    # ):
+    #     xmin, xmax = np.min(xdata), np.max(xdata)
+    #     ymin, ymax = np.min(ydata), np.max(ydata)
+    #     ax.set_xlim(xmin - xpad, xmax + xpad)
+    #     # ax.set_ylim(ymin * 1.01, ymax * 1.01)
 
-    # Set limits for ax1 (Cl vs alpha)
-    set_axis_limits_and_ticks(
-        ax1,
-        np.concatenate([df["alpha"].values, cfd_results["Alpha"].values]),
-        np.concatenate([df["Cl"].values, cfd_results["Cl"].values]),
-    )
+    # # Set limits for ax1 (Cl vs alpha)
+    # set_axis_limits_and_ticks(
+    #     ax1,
+    #     np.concatenate([df["alpha"].values, cfd_results["Alpha"].values]),
+    #     np.concatenate([df["Cl"].values, cfd_results["Cl"].values]),
+    # )
 
-    # Set limits for ax2 (Cd vs alpha)
-    set_axis_limits_and_ticks(
-        ax2,
-        np.concatenate([df["alpha"].values, cfd_results["Alpha"].values]),
-        np.concatenate([df["Cd"].values, cfd_results["Cd"].values]),
-    )
+    # # Set limits for ax2 (Cd vs alpha)
+    # set_axis_limits_and_ticks(
+    #     ax2,
+    #     np.concatenate([df["alpha"].values, cfd_results["Alpha"].values]),
+    #     np.concatenate([df["Cd"].values, cfd_results["Cd"].values]),
+    # )
+
+    for ax in [ax1, ax2]:
+        ax.set_xlim(-10, 25)
+        ax.set_xticks(np.arange(-10, 26, 5))
+
+# Example: Set y-axis limits (adjust as needed for your data)
+    ax1.set_ylim(-0.5, 2.0)   # Cl axis
+    ax1.set_yticks(np.arange(-0.5, 2.6, 0.5))
+
+    ax2.set_ylim(0, 0.4)      # Cd axis
+    ax2.set_yticks(np.arange(0, 0.41, 0.1))
 
     handles, labels = ax1.get_legend_handles_labels()
     fig.legend(

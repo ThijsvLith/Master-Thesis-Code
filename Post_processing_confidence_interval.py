@@ -478,9 +478,12 @@ for casename in casenames:
     POSTDATA_final_df['alpha_unc'] = POSTDATA_final_df['alpha_unc'].round(1)  # Round alpha to 1 decimal place
 
     grouped = POSTDATA_final_df.groupby('alpha_unc')
+    ic(grouped)
     mean_df = grouped.mean()
+    print(mean_df)
     POSTDATA_final = mean_df
     std_df = grouped.std()
+    print(std_df)
 
     # Find the index where alpha reaches or exceeds PARAM['amax']
     amax_idx = np.argmax(POSTDATA_final['alpha'].values >= PARAM['amax'])

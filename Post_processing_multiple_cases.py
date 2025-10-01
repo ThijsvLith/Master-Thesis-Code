@@ -248,13 +248,13 @@ def get_cm_from_alpha(alpha_query, Model, Re):
 #             'V3_zz_bottom_0.05c_top_Re_5e5', 
 #             'V3_bottom_45_deg_Re_5e5']
 
-# casenames = ['V3_no_zz_Re_1e6', 
-#                     'V3_small_zz_bottom_Re_1e6', 
-#                     'V3_zz_0.05c_top_Re_1e6', 
-#                     'V3_zz_bottom_0.05c_top_Re_1e6', 
-#                     'V3_bottom_0.03c_top_Re_1e6',
-#                     'V3_bottom_45deg_0.03c_top_Re_1e6', 
-#                     'V3_bottom_45_deg_Re_1e6']
+casenames = ['V3_no_zz_Re_1e6', 
+                    'V3_small_zz_bottom_Re_1e6', 
+                    'V3_zz_0.05c_top_Re_1e6', 
+                    'V3_zz_bottom_0.05c_top_Re_1e6', 
+                    'V3_bottom_0.03c_top_Re_1e6',
+                    'V3_bottom_45deg_0.03c_top_Re_1e6', 
+                    'V3_bottom_45_deg_Re_1e6']
 
 # casenames = ['V3_no_zz_Re_5e5']
 

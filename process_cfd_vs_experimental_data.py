@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import scipy.integrate as integrate
 from scipy.interpolate import InterpolatedUnivariateSpline, interp1d
+from icecream import ic
 
 if not hasattr(integrate, "trapezoid"):
     integrate.trapezoid = np.trapezoid
@@ -19,7 +20,41 @@ from Determine_Correction_Factor_with_definitions import (
 )
 from utils import PROCESSED_DATA_DIR, PROJECT_DIR, ensure_directory
 
-DEFAULT_CASES = ["V3_no_zz_Re_1e6"]
+# DEFAULT_CASES = ["V3_no_zz_Re_1e6"]
+# DEFAULT_CASES = ["Model2_no_zz_Re_1e6"]
+# DEFAULT_CASES = ["V3_no_zz_Re_5e5"]
+# DEFAULT_CASES = ["Model2_no_zz_Re_5e5"]
+# DEFAULT_CASES = ['V3_bottom_45deg_0.03c_top_Re_1e6']
+
+
+# DEFAULT_CASES = [
+#              'Model2_small_zz_bottom_Re_5e5',
+#              'Model2_zz_0.1c_top_Re_5e5',
+#              'Model2_zz_0.05c_top_Re_5e5',
+#              'Model2_zz_bottom_0.05c_top_Re_5e5']#,
+#             #  'Model2_zz_bottom_Re_5e5']  # State all different cases here
+
+# DEFAULT_CASES = [ 
+#              'Model2_small_zz_bottom_Re_1e6',
+#             'Model2_zz_0.1c_top_Re_1e6', 
+#             'Model2_zz_0.05c_top_Re_1e6',
+#             'Model2_zz_bottom_0.05c_top_Re_1e6']#,
+#             #'Model2_zz_bottom_Re_1e6']  ## State all different cases here
+
+# DEFAULT_CASES = [
+#             'V3_small_zz_bottom_Re_5e5',
+#             'V3_zz_0.05c_top_Re_5e5',
+#             'V3_zz_bottom_0.05c_top_Re_5e5', 
+#             'V3_bottom_45_deg_Re_5e5']
+
+# DEFAULT_CASES = [ 
+#                     'V3_small_zz_bottom_Re_1e6', 
+#                     'V3_zz_0.05c_top_Re_1e6', 
+#                     'V3_zz_bottom_0.05c_top_Re_1e6', 
+#                     'V3_bottom_0.03c_top_Re_1e6',
+#                     'V3_bottom_45deg_0.03c_top_Re_1e6', 
+#                     'V3_bottom_45_deg_Re_1e6']
+
 DEFAULT_METHOD = "Fmincon"
 DEFAULT_ALPHA_MIN = 2.0
 DEFAULT_ALPHA_MAX = 8.0
@@ -173,6 +208,8 @@ def load_and_preprocess_data_unc(
                 params["amax"] = data.iloc[use_idx, alpha_col]
         else:
             params["amax"] = 50
+        data = data_unc_all ## MUST BE UNC_ALL TO GET STANDARD DEVIATION
+        print(params['amax'])
     elif model == "V3":
         idx = data_unc[data_unc[9].isin([40, 120])].index
         params["skip_idx"] = idx.tolist()
@@ -187,7 +224,8 @@ def load_and_preprocess_data_unc(
                 params["amax"] = data_unc.iloc[use_idx, alpha_col]
         else:
             params["amax"] = 50
-        data = data_unc
+        data = data_unc_all ## MUST BE UNC_ALL TO GET STANDARD DEVIATION
+        print(data.shape)
     else:
         raise ValueError(f"Unsupported model '{model}'.")
 
@@ -306,7 +344,7 @@ def process_case(
     alpha_min: float,
     alpha_max: float,
     method: str,
-    transition: bool = True,
+    transition: bool = False,
 ) -> pd.DataFrame:
     model, Re = parse_case_info(casename)
     params = get_model_parameters(model)
@@ -386,7 +424,7 @@ def process_case(
     cpwu = postdata_presscorr[:, 4 : 4 + n_x]
     cpwl = postdata_presscorr[:, 4 + n_x : 4 + 2 * n_x]
     diff_cp = cpwl - cpwu
-    postdata_presscorr[:, 2] = np.trapezoid(diff_cp, STRIPS["x"], axis=1) * (
+    postdata_presscorr[:, 2] = integrate.trapezoid(diff_cp, STRIPS["x"], axis=1) * (
         1 / params["c"]
     )
 
@@ -501,11 +539,13 @@ def process_case(
     )
     postdata_final_df["alpha_unc"] = postdata_presscorr[:, 0].round(1)
     postdata_final_df["alpha_unc"] = postdata_final_df["alpha_unc"].round(1)
+    ic(postdata_final_df)
 
     grouped = postdata_final_df.groupby("alpha_unc")
     mean_df = grouped.mean()
-    std_df = grouped.std().fillna(0)
-
+    std_df = grouped.std()
+    print(grouped.size()) 
+    ic(std_df)
     postdata_final_df = mean_df.reset_index()
     std_df = std_df.reset_index().rename(columns={"Cd": "std_Cd", "Cl": "std_Cl"})
     merged_df = postdata_final_df.merge(
