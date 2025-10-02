@@ -20,7 +20,7 @@ from Determine_Correction_Factor_with_definitions import (
 )
 from utils import PROCESSED_DATA_DIR, PROJECT_DIR, ensure_directory
 
-# DEFAULT_CASES = ["V3_no_zz_Re_1e6"]
+DEFAULT_CASES = ["V3_no_zz_Re_1e6"]
 # DEFAULT_CASES = ["Model2_no_zz_Re_1e6"]
 # DEFAULT_CASES = ["V3_no_zz_Re_5e5"]
 # DEFAULT_CASES = ["Model2_no_zz_Re_5e5"]

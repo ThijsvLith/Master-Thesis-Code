@@ -2,6 +2,9 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from plot_styling import set_plot_style
+
+set_plot_style()
 
 # Read the first file, skipping the first two rows
 filename1 = r"C:\TU_Delft\Master\Thesis\Wind tunnel analysis code\Thijs LTT\Test_TvL\Model2\Test runs\unc_all_Traverse_no_zz_8deg.txt"
@@ -25,26 +28,38 @@ data3_sel = data3.iloc[2485:2621, :]
 x3 = data3_sel.iloc[:, 9]
 y3 = data3_sel.iloc[:, 5]
 
-x3_adjusted = x3-100
+x3_adjusted = x3 - 100
 
-plt.figure(figsize=(16, 5))
+fig, ax = plt.subplots(figsize=(10, 4))
 
 # Plot lines with defined color cycle
-plt.plot(x1, y1, color='C0', linestyle='-', label='Full traverse no_zz')  # blue
-plt.plot(x2, y2, color='C1', linestyle='-', label='no_zz')  # orange
-plt.plot(x3, y3, color='C2', linestyle='-', label='zz_0.1c_top')  # green
-plt.plot(x3_adjusted, y3, color='C2', linestyle='--', label='zz_0.1c_top (shifted)')
+ax.plot(x1, y1, color='C0', linestyle='-', label='Full traverse no_zz')
+ax.plot(x2, y2, color='C1', linestyle='-', label='no_zz')
+ax.plot(x3, y3, color='C2', linestyle='-', label='zz_0.1c_top')
+ax.plot(x3_adjusted, y3, color='C2', linestyle='--', label='zz_0.1c_top (shifted)')
 
-# Labels and title
-plt.xlabel('z-position on wake rake (mm)', fontsize=12)
-plt.ylabel('$C_d$ (-)', fontsize=12)
-# plt.title('Wake Rake Traverse Comparison $\\alpha = 8^\\circ$ and $Re = 1e6$', fontsize=13)
+ax.set_xlabel('z-position on wake rake (mm)')
+ax.set_ylabel(r"$C_\mathrm{d}$ (-)")
+ax.set_xlim(0, 400)
+ax.set_xticks(range(0, 401, 50))
 
-plt.xlim(0, 400)  # Set x-axis from 0 to 400
-plt.xticks(range(0, 401, 50))  # Optional: ticks every 50 mm
+# Reduce the number of y-axis ticks
+ax.yaxis.set_major_locator(plt.MaxNLocator(5))
 
-# Grid and legend
-plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
-plt.legend(fontsize=10)
-plt.tight_layout()
+ax.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+
+handles, labels = ax.get_legend_handles_labels()
+
+fig.tight_layout()
+plt.subplots_adjust(bottom=0.28)  # Add space for the legend
+
+fig.legend(
+    handles, labels,
+    loc='lower center',
+    bbox_to_anchor=(0.5, 0),
+    ncol=len(labels),
+    frameon=False
+)
+
+fig.savefig('results/WakeRake_visualization.pdf')
 plt.show()

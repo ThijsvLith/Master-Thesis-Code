@@ -28,7 +28,7 @@ def concise_label(casename):
     label = label.replace('V3_bottom', 'V3_zz_bottom')
     label = label.replace('Model2_', '').replace('V3_', '')
     label = label.replace('Model2_', '').replace('V3_', '')
-    label = label.replace('_Re_5e5', '').replace('_Re_1e6', '')
+    # label = label.replace('_Re_5e5', '').replace('_Re_1e6', '')
     return label
 
 def load_processed_case(casename: str) -> pd.DataFrame:
@@ -38,7 +38,7 @@ def load_processed_case(casename: str) -> pd.DataFrame:
     return pd.read_csv(input_path)
 
 def plot_multi_case(casenames, output_path):
-    fig, axs = plt.subplots(2, 2, figsize=(14, 10), constrained_layout=False)
+    fig, axs = plt.subplots(2, 2, figsize=(10, 6), constrained_layout=False)
     ax_cl_alpha, ax_cd_alpha = axs[0, 0], axs[0, 1]
     ax_cl_cd, ax_clcd_alpha = axs[1, 0], axs[1, 1]
 
@@ -143,45 +143,44 @@ def plot_multi_case(casenames, output_path):
         handles, labels,
         loc="lower center",
         bbox_to_anchor=(0.5, -0.02),
-        ncol=4, #len(labels),
+        ncol=3, #len(labels),
         frameon=False,
-        fontsize=14
     )
 
     fig.tight_layout()
-    fig.subplots_adjust(bottom=0.13)
+    fig.subplots_adjust(bottom=0.2)
     fig.savefig(output_path)
     plt.show()
     # plt.close(fig)
 
 def main():
-    casenames = ['V3_no_zz_Re_1e6', 
-                    'V3_small_zz_bottom_Re_1e6', 
-                    'V3_zz_0.05c_top_Re_1e6', 
-                    'V3_zz_bottom_0.05c_top_Re_1e6', 
-                    'V3_bottom_0.03c_top_Re_1e6',
-                    'V3_bottom_45deg_0.03c_top_Re_1e6', 
-                    'V3_bottom_45_deg_Re_1e6']
+    # casenames = ['V3_no_zz_Re_1e6', 
+    #                 'V3_small_zz_bottom_Re_1e6', 
+    #                 'V3_zz_0.05c_top_Re_1e6', 
+    #                 'V3_zz_bottom_0.05c_top_Re_1e6', 
+    #                 'V3_bottom_0.03c_top_Re_1e6',
+    #                 'V3_bottom_45deg_0.03c_top_Re_1e6', 
+    #                 'V3_bottom_45_deg_Re_1e6']
     
-    casenames = ['V3_no_zz_Re_5e5',
-            'V3_small_zz_bottom_Re_5e5',
-            'V3_zz_0.05c_top_Re_5e5',
-            'V3_zz_bottom_0.05c_top_Re_5e5', 
-            'V3_bottom_45_deg_Re_5e5']
+    # casenames = ['V3_no_zz_Re_5e5',
+    #         'V3_small_zz_bottom_Re_5e5',
+    #         'V3_zz_0.05c_top_Re_5e5',
+    #         'V3_zz_bottom_0.05c_top_Re_5e5', 
+    #         'V3_bottom_45_deg_Re_5e5']
     
-    casenames = ['Model2_no_zz_Re_1e6', 
-             'Model2_small_zz_bottom_Re_1e6',
-            'Model2_zz_0.1c_top_Re_1e6', 
-            'Model2_zz_0.05c_top_Re_1e6',
-            'Model2_zz_bottom_0.05c_top_Re_1e6']#,
-            #'Model2_zz_bottom_Re_1e6']  ## State all different cases here
+    # casenames = ['Model2_no_zz_Re_1e6', 
+    #          'Model2_small_zz_bottom_Re_1e6',
+    #         'Model2_zz_0.1c_top_Re_1e6', 
+    #         'Model2_zz_0.05c_top_Re_1e6',
+    #         'Model2_zz_bottom_0.05c_top_Re_1e6']#,
+    #         #'Model2_zz_bottom_Re_1e6']  ## State all different cases here
     
-    casenames = ['Model2_no_zz_Re_5e5',
-             'Model2_small_zz_bottom_Re_5e5',
-             'Model2_zz_0.1c_top_Re_5e5',
-             'Model2_zz_0.05c_top_Re_5e5',
-             'Model2_zz_bottom_0.05c_top_Re_5e5']#,
-            #  'Model2_zz_bottom_Re_5e5']  # State all different cases here
+    # casenames = ['Model2_no_zz_Re_5e5',
+    #          'Model2_small_zz_bottom_Re_5e5',
+    #          'Model2_zz_0.1c_top_Re_5e5',
+    #          'Model2_zz_0.05c_top_Re_5e5',
+    #          'Model2_zz_bottom_0.05c_top_Re_5e5']#,
+    #         #  'Model2_zz_bottom_Re_5e5']  # State all different cases here
     
     casenames = ['V3_no_zz_Re_5e5', 'V3_no_zz_Re_1e6', 'V3_zz_bottom_0.05c_top_Re_5e5','V3_zz_bottom_0.05c_top_Re_1e6']
 
