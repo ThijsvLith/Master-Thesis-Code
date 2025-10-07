@@ -15,20 +15,40 @@ PROCESSED_DATA_DIR = Path("processed_data")
 RESULTS_DIR = Path("results")
 RESULTS_DIR.mkdir(exist_ok=True)
 
-def concise_label(casename):
-    """
-    Generate a concise label for the given case name by removing model and Reynolds number info.
+LABEL_MAP = {
+    'V3_no_zz_Re_1e6': r'No ZZ, $\mathrm{Re}=10^6$',
+    'V3_small_zz_bottom_Re_1e6': r'ZZ on bottom at $90^\circ$, $\mathrm{Re}=10^6$',
+    'V3_zz_0.05c_top_Re_1e6': r'ZZ on top at 5\%, $\mathrm{Re}=10^6$',
+    'V3_zz_bottom_0.05c_top_Re_1e6': r'ZZ on bottom at $90^\circ$ and on top at 5\%, $\mathrm{Re}=10^6$',
+    'V3_bottom_0.03c_top_Re_1e6': r'ZZ on bottom at $90^\circ$ and on top at 3\%, $\mathrm{Re}=10^6$',
+    'V3_bottom_45deg_0.03c_top_Re_1e6': r'ZZ on bottom at $45^\circ$ and on top at 3\%, $\mathrm{Re}=10^6$',
+    'V3_bottom_45_deg_Re_1e6': r'ZZ on bottom at $45^\circ$, $\mathrm{Re}=10^6$',
 
-    Args:
-        casename (str): Full case name string.
-    Returns:
-        str: Concise label for legend.
-    """
-    label = casename.replace('small_', '')
-    label = label.replace('V3_bottom', 'V3_zz_bottom')
-    label = label.replace('Model2_', '').replace('V3_', '')
-    label = label.replace('Model2_', '').replace('V3_', '')
-    # label = label.replace('_Re_5e5', '').replace('_Re_1e6', '')
+    'V3_no_zz_Re_5e5': r'No ZZ, $\mathrm{Re}=5 \times 10^5$',
+    'V3_small_zz_bottom_Re_5e5': r'ZZ on bottom at $90^\circ$, $\mathrm{Re}=5 \times 10^5$',
+    'V3_zz_0.05c_top_Re_5e5': r'ZZ on top at 5\%, $\mathrm{Re}=5 \times 10^5$',
+    'V3_zz_bottom_0.05c_top_Re_5e5': r'ZZ on bottom at $90^\circ$ and on top at 5\%, $\mathrm{Re}=5 \times 10^5$',
+    'V3_bottom_45_deg_Re_5e5': r'ZZ on bottom at $45^\circ$, $\mathrm{Re}=5 \times 10^5$',
+
+    'Model2_no_zz_Re_1e6': r'No ZZ, $\mathrm{Re}=10^6$',
+    'Model2_small_zz_bottom_Re_1e6': r'ZZ on bottom at $90^\circ$, $\mathrm{Re}=10^6$',
+    'Model2_zz_0.1c_top_Re_1e6': r'ZZ on top at 10\%, $\mathrm{Re}=10^6$',
+    'Model2_zz_0.05c_top_Re_1e6': r'ZZ on top at 5\%, $\mathrm{Re}=10^6$',
+    'Model2_zz_bottom_0.05c_top_Re_1e6': r'ZZ on bottom at $90^\circ$ and on top at 5\%, $\mathrm{Re}=10^6$',
+
+    'Model2_no_zz_Re_5e5': r'No ZZ, $\mathrm{Re}=5 \times 10^5$',
+    'Model2_small_zz_bottom_Re_5e5': r'ZZ on bottom at $90^\circ$, $\mathrm{Re}=5 \times 10^5$',
+    'Model2_zz_0.1c_top_Re_5e5': r'ZZ on top at 10\%, $\mathrm{Re}=5 \times 10^5$',
+    'Model2_zz_0.05c_top_Re_5e5': r'ZZ on top at 5\%, $\mathrm{Re}=5 \times 10^5$',
+    'Model2_zz_bottom_0.05c_top_Re_5e5': r'ZZ on bottom at $90^\circ$ and on top at 5\%, $\mathrm{Re}=5 \times 10^5$',
+}
+
+def get_label(Reynolds_on, casename: str) -> str:
+    """Return display label for casename; fallback to casename if not in LABEL_MAP."""
+    label = LABEL_MAP.get(casename, casename)
+    if Reynolds_on == False:
+        label = label.replace(r', $\mathrm{Re}=10^6$', '')
+        label = label.replace(r', $\mathrm{Re}=5 \times 10^5$', '')
     return label
 
 def load_processed_case(casename: str) -> pd.DataFrame:
@@ -37,8 +57,8 @@ def load_processed_case(casename: str) -> pd.DataFrame:
         raise FileNotFoundError(f"Missing processed data for case '{casename}'. Expected at {input_path}.")
     return pd.read_csv(input_path)
 
-def plot_multi_case(casenames, output_path):
-    fig, axs = plt.subplots(2, 2, figsize=(10, 6), constrained_layout=False)
+def plot_multi_case(Reynolds_on, casenames, output_path):
+    fig, axs = plt.subplots(2, 2, figsize=(10, 7), constrained_layout=False)
     ax_cl_alpha, ax_cd_alpha = axs[0, 0], axs[0, 1]
     ax_cl_cd, ax_clcd_alpha = axs[1, 0], axs[1, 1]
 
@@ -47,7 +67,7 @@ def plot_multi_case(casenames, output_path):
     for idx, casename in enumerate(casenames):
         df = load_processed_case(casename)
         color = colors[idx % len(colors)]
-        label = concise_label(casename)
+        label = get_label(Reynolds_on, casename)
 
         # Get indices for measured region
         start_idx = int(df['start_idx'].iloc[0])
@@ -142,8 +162,8 @@ def plot_multi_case(casenames, output_path):
     fig.legend(
         handles, labels,
         loc="lower center",
-        bbox_to_anchor=(0.5, -0.02),
-        ncol=3, #len(labels),
+        bbox_to_anchor=(0.5,0),
+        ncol=2, #len(labels),
         frameon=False,
     )
 
@@ -153,41 +173,83 @@ def plot_multi_case(casenames, output_path):
     plt.show()
     # plt.close(fig)
 
+# CASE_GROUPS containing only the 5-casenames lists (from the original file)
+CASE_GROUPS = {
+    "V3_all_5e5": {
+        "cases": [
+            "V3_no_zz_Re_5e5",
+            "V3_small_zz_bottom_Re_5e5",
+            "V3_zz_0.05c_top_Re_5e5",
+            "V3_zz_bottom_0.05c_top_Re_5e5",
+            "V3_bottom_45_deg_Re_5e5",
+        ],
+        "output": RESULTS_DIR / "multi_case_comparison_V3_Re5e5.pdf",
+    },
+    "V3_all_1e6": {
+        "cases": [
+            "V3_no_zz_Re_1e6",
+            "V3_small_zz_bottom_Re_1e6",
+            "V3_zz_0.05c_top_Re_1e6",
+            "V3_zz_bottom_0.05c_top_Re_1e6",
+            "V3_bottom_0.03c_top_Re_1e6",
+            "V3_bottom_45deg_0.03c_top_Re_1e6",
+            "V3_bottom_45_deg_Re_1e6",
+        ],
+        "output": RESULTS_DIR / "multi_case_comparison_V3_Re1e6.pdf",
+    },
+    "Model2_all_1e6": {
+        "cases": [
+            "Model2_no_zz_Re_1e6",
+            "Model2_small_zz_bottom_Re_1e6",
+            "Model2_zz_0.1c_top_Re_1e6",
+            "Model2_zz_0.05c_top_Re_1e6",
+            "Model2_zz_bottom_0.05c_top_Re_1e6",
+        ],
+        "output": RESULTS_DIR / "multi_case_comparison_Model2_Re1e6.pdf",
+    },
+    "Model2_all_5e5": {
+        "cases": [
+            "Model2_no_zz_Re_5e5",
+            "Model2_small_zz_bottom_Re_5e5",
+            "Model2_zz_0.1c_top_Re_5e5",
+            "Model2_zz_0.05c_top_Re_5e5",
+            "Model2_zz_bottom_0.05c_top_Re_5e5",
+        ],
+        "output": RESULTS_DIR / "multi_case_comparison_Model2_Re5e5.pdf",
+    },
+    "V3_multiple_Re": {
+        "cases": [
+            "V3_no_zz_Re_5e5",
+            "V3_no_zz_Re_1e6",
+            "V3_zz_bottom_0.05c_top_Re_5e5",
+            "V3_zz_bottom_0.05c_top_Re_1e6",
+        ],
+        "output": RESULTS_DIR / "multi_case_comparison_V3_multiple_Re.pdf",
+    },
+    "Model2_multiple_Re": {
+        "cases": [
+            "Model2_no_zz_Re_5e5",
+            "Model2_no_zz_Re_1e6",
+            "Model2_zz_bottom_0.05c_top_Re_5e5",
+            "Model2_zz_bottom_0.05c_top_Re_1e6",
+        ],
+        "output": RESULTS_DIR / "multi_case_comparison_Model2_multiple_Re.pdf",
+    },
+}
+
 def main():
-    # casenames = ['V3_no_zz_Re_1e6', 
-    #                 'V3_small_zz_bottom_Re_1e6', 
-    #                 'V3_zz_0.05c_top_Re_1e6', 
-    #                 'V3_zz_bottom_0.05c_top_Re_1e6', 
-    #                 'V3_bottom_0.03c_top_Re_1e6',
-    #                 'V3_bottom_45deg_0.03c_top_Re_1e6', 
-    #                 'V3_bottom_45_deg_Re_1e6']
-    
-    # casenames = ['V3_no_zz_Re_5e5',
-    #         'V3_small_zz_bottom_Re_5e5',
-    #         'V3_zz_0.05c_top_Re_5e5',
-    #         'V3_zz_bottom_0.05c_top_Re_5e5', 
-    #         'V3_bottom_45_deg_Re_5e5']
-    
-    # casenames = ['Model2_no_zz_Re_1e6', 
-    #          'Model2_small_zz_bottom_Re_1e6',
-    #         'Model2_zz_0.1c_top_Re_1e6', 
-    #         'Model2_zz_0.05c_top_Re_1e6',
-    #         'Model2_zz_bottom_0.05c_top_Re_1e6']#,
-    #         #'Model2_zz_bottom_Re_1e6']  ## State all different cases here
-    
-    # casenames = ['Model2_no_zz_Re_5e5',
-    #          'Model2_small_zz_bottom_Re_5e5',
-    #          'Model2_zz_0.1c_top_Re_5e5',
-    #          'Model2_zz_0.05c_top_Re_5e5',
-    #          'Model2_zz_bottom_0.05c_top_Re_5e5']#,
-    #         #  'Model2_zz_bottom_Re_5e5']  # State all different cases here
-    
-    casenames = ['V3_no_zz_Re_5e5', 'V3_no_zz_Re_1e6', 'V3_zz_bottom_0.05c_top_Re_5e5','V3_zz_bottom_0.05c_top_Re_1e6']
+    # Choose which group to plot by changing GROUP_KEY to one of:
+    #   "V3_all_5e5", "V3_all_1e6", "Model2_all_1e6", "Model2_all_5e5", "V3_multiple_Re", "Model2_multiple_Re"
+    GROUP_KEY = "Model2_multiple_Re"
+    Reynolds_on = True  # Set to False to remove Re from labels
 
-    # casenames = ['Model2_no_zz_Re_5e5', 'Model2_no_zz_Re_1e6', 'Model2_zz_bottom_0.05c_top_Re_5e5','Model2_zz_bottom_0.05c_top_Re_1e6']
+    if GROUP_KEY not in CASE_GROUPS:
+        raise KeyError(f"Unknown CASE_GROUP key: {GROUP_KEY}. Available keys: {list(CASE_GROUPS.keys())}")
 
-    output_path = RESULTS_DIR / "multi_case_comparison_V3_multiple_Re.pdf"
-    plot_multi_case(casenames, output_path)
+    casenames = CASE_GROUPS[GROUP_KEY]["cases"]
+    output_path = CASE_GROUPS[GROUP_KEY]["output"]
+
+    plot_multi_case(Reynolds_on, casenames, output_path)
 
 if __name__ == "__main__":
     main()

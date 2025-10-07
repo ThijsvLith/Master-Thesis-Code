@@ -6,6 +6,9 @@ from scipy.integrate import trapezoid
 from icecream import ic
 import os
 
+from plot_styling import set_plot_style
+
+set_plot_style()
 
 def load_and_preprocess_data(
     filename,
@@ -114,37 +117,51 @@ def calculate_correction_factor(
     return factor, rangealpha, x, Cpth
 
 
-def plot_correction_factors(alphas_list, factors_list, labels):
-    plt.figure(figsize=(16, 6))
+def plot_correction_factors(model, alphas_list, factors_list, labels):
+    fig, ax = plt.subplots(figsize=(10, 5))
     for alpha, factor, label in zip(alphas_list, factors_list, labels):
+        ax.plot(alpha, factor, "o", label=label)
 
-        plt.plot(alpha, factor, "o", label=label)
-    plt.xlabel(r"$\alpha$ ($^\circ$)")
-    plt.ylabel(r"$\eta$ (-)")
-    plt.ylim([1, 1.5])
-    plt.xlim(-10, 25)
-    plt.xticks(range(-10, 26, 5))
-    # plt.title('Correction factor vs. Angle of attack')
-    plt.grid(True)
-    plt.legend(loc="lower left")
-    plt.tight_layout()
+    ax.set_xlabel(r"$\alpha$ ($^\circ$)")
+    ax.set_ylabel(r"$\eta$ (-)")
+    ax.set_ylim([1, 1.5])
+    ax.set_xlim(-10, 25)
+    ax.set_xticks(range(-10, 26, 5))
+    ax.grid(True)
+
+    # Put legend outside the figure (bottom), no frame, 3 columns
+    handles, lbls = ax.get_legend_handles_labels()
+    fig.legend(
+        handles,
+        lbls,
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.1),  # move legend below figure
+        ncol=3,
+        frameon=False,
+    )
+
+    # Make room for the outside legend and save
+    fig.tight_layout()
+    plt.subplots_adjust(bottom=0.18)  # increase bottom margin so legend is visible
+    fig.savefig(f"results/all_correction_factors_{model}.pdf", bbox_inches="tight")
     plt.show()
 
 
 def plot_fitting_subplots(presspos, diffCp, x, Cpth, alpha, rangealpha):
     p = len(rangealpha)
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(10, 4))
     for idx, i in enumerate(rangealpha):
         # plt.subplot(2, int(np.ceil(p / 2)), idx + 1)
         plt.plot(presspos, diffCp[i, :], "x", label="Measured")
         plt.plot(x, Cpth[i, :], "-", label="Calculated")
-        plt.xlabel("x [m]")
-        plt.ylabel("Cp [-]")
-        plt.title(f"Angle = {alpha[i]:.1f}°")
+        plt.xlabel("x (m)")
+        plt.ylabel(r"$Cp$ (-)")
+        # plt.title(f"Angle = {alpha[i]:.1f}°")
         plt.xlim([-2.5, 5])
         plt.grid(True)
         plt.legend()
-    # plt.tight_layout()
+    plt.tight_layout()
+    plt.savefig("results/Fitting_subplots.pdf")
     plt.show()
 
 
@@ -175,7 +192,7 @@ def correction_factors_all_cases(
         label = label.replace("Model2_", "").replace("V3_", "")
 
         labels.append(label)
-    plot_correction_factors(alphas_list, factors_list, labels)
+    plot_correction_factors(model, alphas_list, factors_list, labels)
     return alphas_list, factors_list, labels
 
 
@@ -233,7 +250,7 @@ def correction_factors_no_plot(
 def run_main():
     ## # --- CHANGE PARAMETERS FROM HERE ---
 
-    model = "Model2"  ## Specify model as additional preprocessing step has to be done for model2
+    model = "V3"  ## Specify model as additional preprocessing step has to be done for model2
     if model == "Model2":
         casenames = [
             "Model2_no_zz_Re_5e5",
@@ -266,7 +283,7 @@ def run_main():
             "V3_bottom_45_deg_Re_1e6",
             "V3_bottom_45deg_0.03c_top_Re_1e6",
         ]
-        fit_case = "V3_no_zz_Re_5e5"
+        fit_case = "V3_no_zz_Re_1e6"
 
     # --- STRIPS dictionary for pressure tab locations ---
     STRIPS = {}
@@ -315,9 +332,12 @@ def run_main():
     a_min_fullrange = -10
     a_max_fullrange = 25
 
-    alpha_min = 2
-    alpha_max = 8
+    # alpha_min = 2
+    # alpha_max = 8
 
+    #To show angle of attack = 8 
+    alpha_min = 7.9
+    alpha_max = 9
     ## # --- Run the functions ---
     correction_factors_all_cases(
         casenames, model, STRIPS, a_min_fullrange, a_max_fullrange, Method

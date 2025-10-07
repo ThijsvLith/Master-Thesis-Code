@@ -13,11 +13,11 @@ import pandas as pd
 from plot_styling import set_plot_style
 from utils import PROCESSED_DATA_DIR, PROJECT_DIR, RESULTS_DIR, ensure_directory
 
-DEFAULT_CASES = ["V3_no_zz_Re_1e6"]
+# DEFAULT_CASES = ["V3_no_zz_Re_1e6"]
 # DEFAULT_CASES = ["Model2_no_zz_Re_1e6"]
 # DEFAULT_CASES = ["V3_no_zz_Re_5e5"]
 # DEFAULT_CASES = ["Model2_no_zz_Re_5e5"]
-# DEFAULT_CASES = ['V3_bottom_45deg_0.03c_top_Re_1e6']
+DEFAULT_CASES = ['V3_bottom_45deg_0.03c_top_Re_1e6']
 
 def parse_case_info(case_string: str) -> Tuple[str, str]:
     parts = case_string.split("_")
@@ -107,7 +107,7 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
             "-x",
             linewidth=2,
             color="C0",
-            label="WT data",
+            label="WT",
         )
         ax2.plot(
             measured_df["alpha"],
@@ -115,7 +115,7 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
             "-x",
             linewidth=2,
             color="C0",
-            label="WT data",
+            label="WT",
         )
 
     if not measured_df.empty and {"std_Cl", "std_Cd"}.issubset(measured_df.columns):
@@ -125,9 +125,9 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
             measured_df["Cl"] + 3 * measured_df["std_Cl"],
             color="C0",
             alpha=0.3,
-            label="CI of 99\%",
+            label="WT CI of 99\%",
         )
-        print(measured_df["std_Cl"])
+        # print(measured_df["std_Cl"])
         ax2.fill_between(
             measured_df["alpha"],
             measured_df["Cd"] - 3 * measured_df["std_Cd"],
@@ -148,7 +148,7 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
             "-x",
             linewidth=2,
             color="red",
-            label=r"Extrapolated $C_{\mathrm{l}}$ data",
+            label=r"Extrapolated $C_{\mathrm{l}}$",
         )
         if {"Cl_low", "Cl_up"}.issubset(extrap_df.columns):
             ax1.fill_between(
@@ -166,7 +166,7 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
         "--o",
         linewidth=2,
         color="g",
-        label="CFD data",
+        label="CFD",
     )
     ax1.set_xlabel(r"$\alpha$ ($^\circ$)")
     ax1.set_ylabel(r"$C_{\mathrm{l}}$ (-)")
@@ -177,7 +177,7 @@ def plot_case(df: pd.DataFrame, casename: str, output_path: Path) -> None:
         "--o",
         linewidth=2,
         color="g",
-        label="CFD data",
+        label="CFD",
     )
     ax2.set_xlabel(r"$\alpha$ ($^\circ$)")
     ax2.set_ylabel(r"$C_{\mathrm{d}}$ (-)")

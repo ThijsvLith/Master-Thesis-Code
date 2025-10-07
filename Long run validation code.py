@@ -24,8 +24,8 @@ df_short = df_short.iloc[1675:1786, :]
 math_labels = [
     r"$C_\mathrm{d}'$ (-)",
     r"$C_\mathrm{l}'$ (-)",
-    r'$C_{p,u,11}$ (-)',
-    r'$C_{p,l,11}$ (-)'
+    r'$C_\mathrm{p,u,11}$ (-)',
+    r'$C_\mathrm{p,l,11}$ (-)'
 ]
 
 fig, axs = plt.subplots(4, 1, figsize=(10, 10), sharex=True)
@@ -43,11 +43,11 @@ for ax, col, math_label in zip(axs, COLS, math_labels):
     x_short = range(len(y_short))
 
     # Raw data
-    ax.plot(x_short, y_short, label='short raw', color='C0', alpha=0.5)
-    ax.plot(x_short, short_mean, label='short cumulative mean', color='C0', linewidth=2, linestyle='--', alpha=1)
+    ax.plot(x_short, y_short, label='Normal raw', color='C0', alpha=0.5)
+    ax.plot(x_short, short_mean, label='Normal cumulative mean', color='C0', linewidth=2, linestyle='--', alpha=1)
 
-    ax.plot(x_long,  y_long,  label='long raw',  color='C1', alpha=0.5)
-    ax.plot(x_long,  long_mean,  label='long cumulative mean',  color='C1', linewidth=2,linestyle='--', alpha=1)
+    ax.plot(x_long,  y_long,  label='Long raw',  color='C1', alpha=0.5)
+    ax.plot(x_long,  long_mean,  label='Long cumulative mean',  color='C1', linewidth=2,linestyle='--', alpha=1)
 
     # Y-axis padding (10 %)
     y_min, y_max = min(y_short.min(), y_long.min()), max(y_short.max(), y_long.max())
@@ -81,6 +81,25 @@ fig.legend(
     ncol=len(labels),
     frameon=False
 )
+
+# Calculate and print final absolute percentage difference between
+# long-run and short-run cumulative means for each parameter
+# Use the normal (short) run as the baseline (deviation from normal)
+param_names = ['Cd', 'Cl', 'Cpwu11', 'Cpwl11']
+for col, pname in zip(COLS, param_names):
+    short_cum = df_short.iloc[:, col].expanding(min_periods=1).mean()
+    long_cum  = df_long.iloc[:,  col].expanding(min_periods=1).mean()
+    short_last = short_cum.iloc[-1]
+    long_last  = long_cum.iloc[-1]
+
+    # baseline is the normal (short) run
+    if abs(short_last) < 1e-12:
+        perc = float('nan')
+    else:
+        perc = 100.0 * abs(long_last - short_last) / abs(short_last)
+
+    print(f"{pname}: abs % diff (long vs normal baseline) at final cummean = {perc:.2f}% "
+          f"(normal={short_last:.6g}, long={long_last:.6g})")
 
 fig.tight_layout()
 plt.subplots_adjust(bottom=0.1)  # Increase bottom margin for legend
